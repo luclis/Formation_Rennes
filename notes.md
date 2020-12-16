@@ -50,3 +50,12 @@ stty raw -echo
 fg
 export TERM=xterm
 ```
+
+
+## From SQLi to Shell
+
+Objectif : obtenir un shell sur la machine.
+
+1. Faire un scan de port
+2. Lancer gobuster, et nikto (cf cours reconnaissance)
+3. Rechercher des failles à exploiter
