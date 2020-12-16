@@ -432,6 +432,11 @@ sftp> exit
 ```
 
 #### Le déposer sur la machine cible
+```` bash 
+$ scp ./dirty www-data@192.168.56.6:/var/www/
+```` 
+
+#### Exécuter l'exploit : 
 ```bash
 $ ssh www-data@192.168.56.6
 Linux debian 2.6.32-5-686 #1 SMP Sun May 6 04:01:19 UTC 2012 i686
