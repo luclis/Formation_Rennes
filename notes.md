@@ -51,6 +51,34 @@ fg
 export TERM=xterm
 ```
 
+## Énumération
+
+### Nmap
+
+Initial
+```bash
+nmap -sV -sC ip -oN nmap/inital.nmap
+```
+
+Full
+```bash
+nmap -sV -sC -p- ip -oA nmap/full.nmap
+``` 
+
+### Gobuster
+
+Wordlists de qualité :
+[https://github.com/danielmiessler/SecLists](https://github.com/danielmiessler/SecLists)
+
+```bash
+gobuster dir -u http://url -w /usr/share/wordlist/dirbuster/directory-list-2.3-med.txt -o gb_med.txt
+```
+
+### Nikto
+
+```bash
+nikto -h http://url
+```
 
 ## From SQLi to Shell
 
