@@ -8,7 +8,14 @@ Exécution de commande basique :
 ?>
 ```
 
-Reverse shell:
+## Exécuter des commandes simplement
+
+Passer en POST :
+"Change request method" dans le Repeter.
+
+encoder les commandes avec `Ctrl + U`.
+
+## Reverse shell:
 http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet
 
 netcat en écoute
