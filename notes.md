@@ -139,3 +139,73 @@ Table: users
 | 1  | admin | 8efe310f9ab3efeae8d410a8e0166eb2 (P4ssw0rd) |
 +----+-------+---------------------------------------------+
 ```
+
+## Casser le Hash
+
+
+### Identifier le type du hash
+
+```bash
+$ hash-identifier       
+   #########################################################################
+   #     __  __                     __           ______    _____           #
+   #    /\ \/\ \                   /\ \         /\__  _\  /\  _ `\         #
+   #    \ \ \_\ \     __      ____ \ \ \___     \/_/\ \/  \ \ \/\ \        #
+   #     \ \  _  \  /'__`\   / ,__\ \ \  _ `\      \ \ \   \ \ \ \ \       #
+   #      \ \ \ \ \/\ \_\ \_/\__, `\ \ \ \ \ \      \_\ \__ \ \ \_\ \      #
+   #       \ \_\ \_\ \___ \_\/\____/  \ \_\ \_\     /\_____\ \ \____/      #
+   #        \/_/\/_/\/__/\/_/\/___/    \/_/\/_/     \/_____/  \/___/  v1.2 #
+   #                                                             By Zion3R #
+   #                                                    www.Blackploit.com #
+   #                                                   Root@Blackploit.com #
+   #########################################################################
+--------------------------------------------------
+ HASH: 8efe310f9ab3efeae8d410a8e0166eb2
+
+Possible Hashs:
+[+] MD5
+[+] Domain Cached Credentials - MD4(MD4(($pass)).(strtolower($username)))
+```
+
+### Chercher sur le web
+
+On peut faire un recherche sur hashes.org
+
+![hashes.org](./images/hashes_org.png)
+
+### Le casser avec hashcat
+
+Trouver le format : 
+
+```bash
+$ hashcat -h | grep -i md5
+      0 | MD5                                              | Raw Hash
+   5100 | Half MD5                                         | Raw Hash
+     10 | md5($pass.$salt)                                 | Raw Hash, Salted and/or Iterated
+     20 | md5($salt.$pass)                                 | Raw Hash, Salted and/or Iterated
+```
+
+Casser le mot de passe avec une liste.
+
+```bash
+$ cat admin.hash
+
+$ hashcat --force -m 0 admin.hash /usr/share/wordlists/rockyou.txt --rules=/usr/share/hashcat/rules/best64.rule
+hashcat (v6.1.1) starting...
+
+Dictionary cache built:
+* Filename..: /usr/share/wordlists/rockyou.txt
+* Passwords.: 14344392
+* Bytes.....: 139921507
+* Keyspace..: 1104517645
+* Runtime...: 8 secs
+
+8efe310f9ab3efeae8d410a8e0166eb2:P4ssw0rd
+```
+
+Revoir un mot de passe déjà cracké.
+```bash
+$ hashcat  admin.hash --show                                                                       
+8efe310f9ab3efeae8d410a8e0166eb2:P4ssw0rd
+```
+
