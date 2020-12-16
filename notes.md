@@ -301,6 +301,9 @@ Module options (post/linux/manage/sshkey_persistence):
    SSHD_CONFIG      /etc/ssh/sshd_config  yes       sshd_config file
    USERNAME                               no        User to add SSH key to (Default: all users on box
 
+msf6 post(linux/manage/sshkey_persistence) > set CREATESSHFOLDER true
+CREATESSHFOLDER => true
+
 msf6 post(linux/manage/sshkey_persistence) > set pubkey /home/kali/.ssh/id_rsa.pub
 pubkey => /home/kali/.ssh/id_rsa.pub
 
