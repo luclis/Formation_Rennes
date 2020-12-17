@@ -354,7 +354,7 @@ On constate qu'on a un ancien noyau Linux. On peut utiliser le fameux __dirty co
 
 ## Récupérer l'exploit
 
-Le site (https://dirtycow.ninja/)[https://dirtycow.ninja/] liste différents exploit pour dirty cow.
+Le site [dirtycow.ninja](https://dirtycow.ninja/) liste différents exploit pour dirty cow.
 
 On peut cliquer sur le github lier pour récupérer un exploit.
 
